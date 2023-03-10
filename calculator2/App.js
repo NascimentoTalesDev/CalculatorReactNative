@@ -35,11 +35,33 @@ export default class App extends Component {
   }
 
   clearMemory = () => {
-    this.setState({ displayValue: "0"})
+    this.setState({ ...initialState })
   }
 
-  setOperator = () => {
-    
+  setOperation = operation => {
+    if (this.state.current === 0) {
+      this.setState({ operation, current: 1 , clearDisplay: true})
+    } else {
+      const equals = operation === "="
+      const values = [...this.state.values]
+
+      try {
+        values[0] = eval(`${values[0]} ${this.state.operation} ${values[1]}`)
+      
+      } catch (error) {
+        values[0] = this.state.values[0]
+      
+      }
+      values[1] = 0
+
+      this.setState({
+        displayValue : values[0],
+        operation : equals ? null : operation,
+        current: equals ? 0 : 1,
+        clearDisplay: !equals,
+        values,
+      })
+    }
   }
 
   render() {
@@ -48,22 +70,22 @@ export default class App extends Component {
           <Display value={this.state.displayValue}/>
         <View style={styles.Buttons}>
           <Button label='AC' onClick={this.clearMemory} triple/>
-          <Button label='/' onClick={this.setOperator} operator/>
+          <Button label='/' onClick={this.setOperation} operator/>
           <Button label='7' onClick={this.addDigit}/>
           <Button label='8' onClick={this.addDigit}/>
           <Button label='9' onClick={this.addDigit}/>
-          <Button label='*' onClick={this.setOperator} operator/>
+          <Button label='*' onClick={this.setOperation} operator/>
           <Button label='4' onClick={this.addDigit}/>
           <Button label='5' onClick={this.addDigit}/>
           <Button label='6' onClick={this.addDigit}/>
-          <Button label='-' onClick={this.setOperator} operator/>
+          <Button label='-' onClick={this.setOperation} operator/>
           <Button label='1' onClick={this.addDigit}/>
           <Button label='2' onClick={this.addDigit}/>
           <Button label='3' onClick={this.addDigit}/>
-          <Button label='+' onClick={this.setOperator} operator/>
+          <Button label='+' onClick={this.setOperation} operator/>
           <Button label='0' onClick={this.addDigit} double/>
           <Button label='.' onClick={this.addDigit}/>
-          <Button label='=' onClick={this.setOperator} operator/>
+          <Button label='=' onClick={this.setOperation} operator/>
         </View>
       </View>
     );
